@@ -33,15 +33,4 @@
 	{"id": "siden1", "src":"Images/siden1.svg", "top":727, "left":328, "visible": "inline"},
 	{"id": "siden2", "src":"Images/siden2.svg", "top":727, "left":476, "visible": "inline"},
 	{"id": "chutuongden", "src":"Images/chutuongden.svg", "top":727, "left":401, "visible": "inline"}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 ]
