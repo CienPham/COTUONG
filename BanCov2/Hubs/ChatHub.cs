@@ -34,5 +34,10 @@ namespace BanCov2.Hubs
             }
             return base.OnDisconnectedAsync(exception);
         }
+        public async Task SendTurnChange(object turnInfo)
+        {
+            var roomId = Context.GetHttpContext().Request.Query["roomId"].ToString();
+            await Clients.Group(roomId).SendAsync("ReceiveTurnChange", turnInfo);
+        }
     }
 }

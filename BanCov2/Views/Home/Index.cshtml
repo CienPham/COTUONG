@@ -40,7 +40,7 @@
             chessNode: [],
             top: 0,
             left: 0
-
+            
         },
         methods:{
             // Thêm hàm isPathClear
@@ -121,10 +121,12 @@
                 return null;
             },
             dragStart(event) {
+              
                 this.top = event.clientY;
                 this.left = event.clientX;
             },
             dragEnd(event) {
+           
                 var id = event.currentTarget.id;
                 var moveX = event.clientX - this.left;
                 var moveY = event.clientY - this.top;
@@ -144,50 +146,47 @@
                 }
 
                 var objRemove = null;
-                //xử lý cho quan mã. mấy đứa xử lý cho các quân khác ngay phía dưới quân mã
-
+                // Xử lý quân mã
                 if (id.indexOf('ma') >= 0) {
-                    console.log('kiểm tra nước đi quân mã');
-
+                    console.log('===== Kiểm tra nước đi quân MÃ =====');
                     var gapI = Math.abs(nodeEnd.i - nodeStart.i);
                     var gapJ = Math.abs(nodeEnd.j - nodeStart.j);
 
                     if (!((gapI == 1 && gapJ == 2) || (gapJ == 1 && gapI == 2))) {
-                        console.log('Lỗi: mã chỉ được đi nước đi hình chữ L (1-2)');
+                        console.log('Lỗi: Mã chỉ được đi nước đi hình chữ L (1-2)');
                         return;
                     }
                     //kiểm tra chặn mã
                     if ((gapI == 1 && gapJ == 2) && (nodeEnd.j > nodeStart.j)) {
                         if (matrix[nodeStart.i][nodeStart.j + 1].id != "") {
-                            console.log('Lỗi mã bị chặn khi đi ngang phải');
+                            console.log('Lỗi: Mã bị chặn khi đi ngang phải');
                             return;
                         }
                     }
                     if ((gapI == 1 && gapJ == 2) && (nodeEnd.j < nodeStart.j)) {
                         if (matrix[nodeStart.i][nodeStart.j - 1].id != "") {
-                            console.log('Lỗi: mã bị chặn khi đi ngang trái');
+                            console.log('Lỗi: Mã bị chặn khi đi ngang trái');
                             return;
                         }
                     }
-
                     if ((gapI == 2 && gapJ == 1) && (nodeEnd.i > nodeStart.i)) {
                         if (matrix[nodeStart.i + 1][nodeStart.j].id != "") {
-                            console.log('Lỗi: mã bị chặn khi đi xuống');
+                            console.log('Lỗi: Mã bị chặn khi đi xuống');
                             return;
                         }
                     }
                     if ((gapI == 2 && gapJ == 1) && (nodeEnd.i < nodeStart.i)) {
                         if (matrix[nodeStart.i - 1][nodeStart.j].id != "") {
-                            console.log('Lỗi: mã bị chặn khi đi lên');
+                            console.log('Lỗi: Mã bị chặn khi đi lên');
                             return;
                         }
                     }
-                   
+                    console.log('Nước đi hợp lệ cho quân Mã');
                 }
                 // Xử lý quân xe
                 else if (id.indexOf('xe') >= 0) {
                     console.log('===== Kiểm tra nước đi quân XE =====');
-                    if (!(nodeStart.i == nodeEnd.i || nodeStart.j == nodeEnd.j)) {
+                    if (!(nodeStart.i === nodeEnd.i || nodeStart.j === nodeEnd.j)) {
                         console.log('Lỗi: Xe chỉ được đi ngang hoặc dọc');
                         return;
                     }
@@ -197,48 +196,37 @@
                     }
                     console.log('Nước đi hợp lệ cho quân Xe');
                 }
-                
                 // Xử lý quân pháo
                 else if (id.indexOf('phao') >= 0) {
                     console.log('===== Kiểm tra nước đi quân PHÁO =====');
-                    if (!(nodeStart.i == nodeEnd.i || nodeStart.j == nodeEnd.j)) {
+                    if (!(nodeStart.i === nodeEnd.i || nodeStart.j === nodeEnd.j)) {
                         console.log('Lỗi: Pháo chỉ được đi ngang hoặc dọc');
                         return;
                     }
                     var piecesBetween = this.countPiecesBetween(nodeStart, nodeEnd, matrix);
-                    if (nodeEnd.id != "") {
-                        if (piecesBetween != 1) {
+                    if (nodeEnd.id !== "") { // Nếu điểm đến có quân (ăn quân)
+                        if (piecesBetween !== 1) {
                             console.log('Lỗi: Pháo cần đúng 1 quân để ăn quân (hiện có ' + piecesBetween + ' quân)');
-                            return;
-                        }
-                    } else {
-                        if (piecesBetween != 0) {
-                            console.log('Lỗi: Đường đi của Pháo bị cản bởi quân khác');
                             return;
                         }
                     }
                     console.log('Nước đi hợp lệ cho quân Pháo');
                 }
-
                 // Xử lý quân sĩ
                 else if (id.indexOf('si') >= 0) {
                     console.log('===== Kiểm tra nước đi quân SĨ =====');
-
                     // Kiểm tra di chuyển chéo 1 ô
-                    if (!(Math.abs(nodeEnd.i - nodeStart.i) == 1 && Math.abs(nodeEnd.j - nodeStart.j) == 1)) {
+                    if (!(Math.abs(nodeEnd.i - nodeStart.i) === 1 && Math.abs(nodeEnd.j - nodeStart.j) === 1)) {
                         console.log('Lỗi: Sĩ chỉ được đi chéo 1 ô');
                         return;
                     }
-
-                    // Với quân Sĩ đỏ (phía trên)
-                    if (id.indexOf('do') >= 0) {
+                    // Kiểm tra phạm vi cung
+                    if (id.indexOf('do') >= 0) { // Sĩ đỏ
                         if (!(nodeEnd.i >= 0 && nodeEnd.i <= 2 && nodeEnd.j >= 3 && nodeEnd.j <= 5)) {
                             console.log('Lỗi: Sĩ phải đi trong phạm vi cung');
                             return;
                         }
-                    }
-                    // Với quân Sĩ đen (phía dưới)
-                    else {
+                    } else { // Sĩ đen
                         if (!(nodeEnd.i >= 7 && nodeEnd.i <= 9 && nodeEnd.j >= 3 && nodeEnd.j <= 5)) {
                             console.log('Lỗi: Sĩ phải đi trong phạm vi cung');
                             return;
@@ -249,81 +237,85 @@
                 // Xử lý quân tượng
                 else if (id.indexOf('tuong') >= 0 && id.indexOf('chutuong') < 0) {
                     console.log('===== Kiểm tra nước đi quân TƯỢNG =====');
-
                     // Kiểm tra di chuyển chéo 2 ô
-                    if (!(Math.abs(nodeEnd.i - nodeStart.i) == 2 && Math.abs(nodeEnd.j - nodeStart.j) == 2)) {
+                    if (!(Math.abs(nodeEnd.i - nodeStart.i) === 2 && Math.abs(nodeEnd.j - nodeStart.j) === 2)) {
                         console.log('Lỗi: Tượng phải đi chéo 2 ô');
                         return;
                     }
-
                     // Kiểm tra chặn tượng
                     var midPoint = matrix[(nodeStart.i + nodeEnd.i) / 2][(nodeStart.j + nodeEnd.j) / 2];
-                    if (midPoint.id != "") {
+                    if (midPoint.id !== "") {
                         console.log('Lỗi: Tượng bị chặn ở điểm giữa');
                         return;
                     }
-
                     // Kiểm tra qua sông
                     if (id.indexOf('do') >= 0) { // Tượng đỏ
-                        if (nodeEnd.i > 4) { // Không được qua nửa dưới bàn cờ
+                        if (nodeEnd.i > 4) {
                             console.log('Lỗi: Tượng không được qua sông');
                             return;
                         }
                     } else { // Tượng đen
-                        if (nodeEnd.i < 5) { // Không được qua nửa trên bàn cờ
+                        if (nodeEnd.i < 5) {
                             console.log('Lỗi: Tượng không được qua sông');
                             return;
                         }
                     }
-
                     console.log('Nước đi hợp lệ cho quân Tượng');
                 }
                 // Xử lý quân tướng
                 else if (id.indexOf('chutuong') >= 0) {
                     console.log('===== Kiểm tra nước đi quân TƯỚNG =====');
-                    if (id.indexOf('do') >= 0) { // Tướng Đỏ
+                    // Kiểm tra di chuyển 1 ô theo chiều dọc hoặc ngang
+                    if (!((Math.abs(nodeEnd.i - nodeStart.i) === 1 && nodeEnd.j === nodeStart.j) ||
+                        (Math.abs(nodeEnd.j - nodeStart.j) === 1 && nodeEnd.i === nodeStart.i))) {
+                        console.log('Lỗi: Tướng chỉ được đi 1 ô theo chiều dọc hoặc ngang');
+                        return;
+                    }
+                    // Kiểm tra phạm vi cung
+                    if (id.indexOf('do') >= 0) { // Tướng đỏ
                         if (!(nodeEnd.i >= 0 && nodeEnd.i <= 2 && nodeEnd.j >= 3 && nodeEnd.j <= 5)) {
                             console.log('Lỗi: Tướng phải đi trong phạm vi cung');
                             return;
                         }
-                    } else { // Tướng Đen
+                    } else { // Tướng đen
                         if (!(nodeEnd.i >= 7 && nodeEnd.i <= 9 && nodeEnd.j >= 3 && nodeEnd.j <= 5)) {
                             console.log('Lỗi: Tướng phải đi trong phạm vi cung');
                             return;
                         }
                     }
-
                     console.log('Nước đi hợp lệ cho quân Tướng');
                 }
-
                 // Xử lý quân tốt
                 else if (id.indexOf('tot') >= 0) {
                     console.log('===== Kiểm tra nước đi quân TỐT =====');
+                    // Kiểm tra quân tốt ĐEN
                     if (id.indexOf('den') >= 0) {
                         console.log('Kiểm tra tốt ĐEN');
-                        if (nodeStart.j > 4) { // Thay đổi điều kiện kiểm tra qua sông
-                            if (!(nodeStart.j == nodeEnd.j && nodeEnd.i == nodeStart.i - 1)) { // Đổi dấu + thành -
-                                console.log('Lỗi: Tốt chưa qua sông chỉ được đi thẳng tiến 1 bước');
+                        if (nodeStart.i < 5) { // Nếu quân tốt đen đã qua sông
+                            if (!(nodeStart.j === nodeEnd.j && nodeEnd.i === nodeStart.i - 1 || // Đi thẳng
+                                nodeStart.i === nodeEnd.i && Math.abs(nodeStart.j - nodeEnd.j) === 1)) { // Đi ngang
+                                console.log('Lỗi: Tốt đen đã qua sông chỉ được đi ngang 1 bước hoặc tiến 1 bước');
                                 return;
                             }
                         } else {
-                            if (!(Math.abs(nodeStart.i - nodeEnd.i) == 1 && nodeStart.j == nodeEnd.j ||
-                                nodeStart.i == nodeEnd.i && Math.abs(nodeStart.j - nodeEnd.j) == 1)) {
-                                console.log('Lỗi: Tốt qua sông chỉ được đi ngang 1 bước hoặc tiến 1 bước');
+                            if (!(nodeStart.j === nodeEnd.j && nodeEnd.i === nodeStart.i - 1)) { // Chỉ được đi thẳng
+                                console.log('Lỗi: Tốt đen chưa qua sông chỉ được đi thẳng tiến 1 bước');
                                 return;
                             }
                         }
-                    } else {
+                    }
+                    // Kiểm tra quân tốt ĐỎ
+                    else {
                         console.log('Kiểm tra tốt ĐỎ');
-                        if (nodeStart.j < 5) { // Thay đổi điều kiện kiểm tra qua sông
-                            if (!(nodeStart.j == nodeEnd.j && nodeEnd.i == nodeStart.i + 1)) { // Đổi dấu - thành +
-                                console.log('Lỗi: Tốt chưa qua sông chỉ được đi thẳng tiến 1 bước');
+                        if (nodeStart.i > 4) { // Nếu quân tốt đỏ đã qua sông
+                            if (!(nodeStart.j === nodeEnd.j && nodeEnd.i === nodeStart.i + 1 || // Đi thẳng
+                                nodeStart.i === nodeEnd.i && Math.abs(nodeStart.j - nodeEnd.j) === 1)) { // Đi ngang
+                                console.log('Lỗi: Tốt đỏ đã qua sông chỉ được đi ngang 1 bước hoặc tiến 1 bước');
                                 return;
                             }
                         } else {
-                            if (!(Math.abs(nodeStart.i - nodeEnd.i) == 1 && nodeStart.j == nodeEnd.j ||
-                                nodeStart.i == nodeEnd.i && Math.abs(nodeStart.j - nodeEnd.j) == 1)) {
-                                console.log('Lỗi: Tốt qua sông chỉ được đi ngang 1 bước hoặc tiến 1 bước');
+                            if (!(nodeStart.j === nodeEnd.j && nodeEnd.i === nodeStart.i + 1)) { // Chỉ được đi thẳng
+                                console.log('Lỗi: Tốt đỏ chưa qua sông chỉ được đi thẳng tiến 1 bước');
                                 return;
                             }
                         }
